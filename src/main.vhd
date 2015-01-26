@@ -110,4 +110,4 @@ begin
 			end case;
 		end if;
 	end process;
-end;
+end main_arch;
