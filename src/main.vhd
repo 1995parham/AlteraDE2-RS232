@@ -33,7 +33,7 @@ signal tick : std_logic := '0';
 begin
 	-- li : clk96 port map (clk, '1', tick);
 	process(clk) begin
-		if (rising_edge(clk)) then
+		if (clk'event and clk = '1') then
 			case present_state is
 				when s1 =>
 					if (rxd = '0') then
