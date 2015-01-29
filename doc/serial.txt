@@ -1,0 +1,15 @@
+In The Name Of God
+
+Parham Alvani <parham.alvani@gmail.com>
+
+#######################################
+
+for using serial interface on windows i have
+many difficulty so i decided to use linux
+, on linux usb-to-serial work great. when
+i connect it, it start working. after i connected
+it, it create /dev/ttyUSB0 and i use this interface
+with command cu (call up another system) with following
+syntax to connect to my AlteraDE2 :
+cu /dev/ttyUSB0 -s 9600
+
