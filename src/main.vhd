@@ -23,6 +23,7 @@ end component;
 type state is (recv, send1, send2, send3, send4, s1, s2, s3, s4, s5, s6);
 
 signal present_state : state := s3;
+signal next_state : state := s3;
 signal player_color : std_logic_vector(15 downto 0);
 
 signal input : std_logic_vector (7 downto 0);
