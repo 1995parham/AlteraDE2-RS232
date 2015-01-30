@@ -61,7 +61,6 @@ begin
 				when send1 =>
 					if (snd_busy = '0') then
 						present_state <= s4;
-					else
 						snd_start <= '0';
 					end if;
 				when s4 =>
@@ -72,7 +71,6 @@ begin
 				when send2 =>
 					if (snd_busy = '0') then
 						present_state <= s5;
-					else
 						snd_start <= '0';
 					end if;
 				when s5 =>
@@ -83,7 +81,6 @@ begin
 				when send3 =>
 					if (snd_busy = '0') then
 						present_state <= s6;
-					else
 						snd_start <= '0';
 					end if;
 				when s6 =>
@@ -94,7 +91,6 @@ begin
 				when send4 =>
 					if (snd_busy = '0') then
 						present_state <= s3;
-					else
 						snd_start <= '0';
 					end if;
 			end case;
