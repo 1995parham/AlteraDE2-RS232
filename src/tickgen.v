@@ -1,8 +1,11 @@
+/*
+ * generate a tick at the specified baud rate * oversampling
+*/
 module BaudTickGen(
 	input clk, enable,
-	output tick  // generate a tick at the specified baud rate * oversampling
+	output tick
 );
-parameter ClkFrequency = 50000000;
+parameter ClkFrequency = 50000000;	// 50 MHz
 parameter Baud = 9600;
 parameter Oversampling = 1;
 
@@ -14,6 +17,3 @@ localparam Inc = ((Baud*Oversampling << (AccWidth-ShiftLimiter))+(ClkFrequency>>
 always @(posedge clk) if(enable) Acc <= Acc[AccWidth-1:0] + Inc[AccWidth:0]; else Acc <= Inc[AccWidth:0];
 assign tick = Acc[AccWidth];
 endmodule
-
-
-////////////////////////////////////////////////////////
