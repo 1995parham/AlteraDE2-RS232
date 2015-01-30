@@ -9,7 +9,7 @@ many difficulty so i decided to use linux,
 on linux usb-to-serial work great. when
 i connect cable, it start working. after i connected
 it create devfile /dev/ttyUSB0 and i use this interface
-with command cu (call up another system) with following
-syntax to connect to my AlteraDE2 RS232 :
-cu /dev/ttyUSB0 -s 9600
+with command miniterm with following syntax to connect
+to my AlteraDE2 RS232 :
+miniterm.py /dev/ttyUSB0 9600
 
