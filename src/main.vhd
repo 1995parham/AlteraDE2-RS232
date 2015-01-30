@@ -19,7 +19,7 @@ component async_transmitter is port (
 );
 end component;
 
-type state is (recv, send1, send2, send3, send4, s1, s2, s3, s4, s5, s6);
+type state is (recv, bsend1, send1, bsend2, send2, bsend3, send3, bsend4, send4, s1, s2, s3, s4, s5, s6);
 
 signal present_state : state := s3;
 signal next_state : state := s3;
@@ -28,19 +28,20 @@ signal player_color : std_logic_vector(15 downto 0);
 signal input : std_logic_vector (7 downto 0);
 
 -- sender ports
-signal snd_data : std_logic_vector (7 downto 0);
-signal snd_start : std_logic;
+signal snd_data : std_logic_vector (7 downto 0) := "00000000";
+signal snd_start : std_logic := '0';
 signal snd_busy : std_logic;
 
 begin
 	-- set senders port
 	snd: async_transmitter port map (clk, snd_start, snd_data, txd, snd_busy);
-
+	
 	process(clk) begin
 		if (rising_edge(clk)) then
 			present_state <= next_state;
 		end if;
 	end process;
+	
 	process(present_state, snd_busy) begin
 		case present_state is
 			when s1 =>
@@ -61,46 +62,50 @@ begin
 			when s3 =>
 				-- start send @
 				snd_data <= "01000000";
+				next_state <= bsend1;
+			when bsend1 =>
 				snd_start <= '1';
 				next_state <= send1;
 			when send1 =>
+				snd_start <= '0';
 				if (snd_busy = '0') then
 					next_state <= s4;
-				else
-					snd_start <= '0';
 				end if;
 			when s4 =>
 				-- start send 0
 				snd_data <= "00110000";
+				next_state <= bsend2;
+			when bsend2 =>
 				snd_start <= '1';
 				next_state <= send2;
 			when send2 =>
+				snd_start <= '0';
 				if (snd_busy = '0') then
 					next_state <= s5;
-				else
-					snd_start <= '0';
 				end if;
 			when s5 =>
 				-- start send /
 				snd_data <= "00101111";
+				next_state <= bsend3;
+			when bsend3 =>
 				snd_start <= '1';
 				next_state <= send3;
 			when send3 =>
+				snd_start <= '0';
 				if (snd_busy = '0') then
 					next_state <= s6;
-				else
-					snd_start <= '0';
 				end if;
 			when s6 =>
 				-- start send \n
 				snd_data <= "00001010";
+				next_state <= bsend4;
+			when bsend4 =>
 				snd_start <= '1';
 				next_state <= send4;
 			when send4 =>
+				snd_start <= '0';
 				if (snd_busy = '0') then
 					next_state <= s3;
-				else
-					snd_start <= '0';
 				end if;
 		end case;
 	end process;
