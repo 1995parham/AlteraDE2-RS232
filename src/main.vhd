@@ -1,37 +1,39 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity trax is port (
+entity serial is port (
 	rxd : in std_logic := '1';
 	txd : out std_logic := '1';
 	led : out std_logic;
 	clk : in std_logic
-	);
+);
 end entity;
 
-architecture main_arch of trax is
+architecture main_arch of serial is
 
-component clk96 is port(
-	clk : in std_logic;
-	enable : in std_logic;
-	tick : out std_logic
-	);
+component sender is port (
+	clk_sender : in std_logic;
+	TxD_start : in std_logic;
+	TxD_data : in std_logic_vector(7 downto 0);
+	TxD : out std_logic;
+	TxD_busy : out std_logic
+);
 end component;
 
 type state is (recv, send1, send2, send3, send4, s1, s2, s3, s4, s5, s6);
 
 signal present_state : state := s3;
-signal count : integer := 0;
 signal player_color : std_logic_vector(15 downto 0);
-signal output_signal : std_logic_vector(31 downto 0);
 
 signal input : std_logic_vector (7 downto 0);
-signal output : std_logic_vector(9 downto 0);
 
 signal tick : std_logic := '0';
 
 begin
-	-- li : clk96 port map (clk, '1', tick);
+	-- set senders port
+	txd <= TxD;
+	clk_sender <= clk;
+
 	process(clk) begin
 		if (clk'event and clk = '1') then
 			case present_state is
@@ -56,56 +58,48 @@ begin
 						present_state <= s2;
 					end if;
 				when s3 =>
-					led <= '1';
-					output <= "0110111011";
+					-- start send @
+					TxD_data <= "01000000";
+					TxD_start <= '1';
 					present_state <= send1;
 				when send1 =>
-					if (count < 10) then
-						txd <= output(count);
-						led <= output(count);
-						count <= count + 1;
-					else
-						count <= 0;
+					if (TxD_busy = '0') then
 						present_state <= s4;
+					else
+						TxD_start <= '0';
 					end if;
 				when s4 =>
-					led <= '1';
-					output <= "0011111011";
+					-- start send 0
+					TxD_data <= "00110000";
+					TxD_start <= '1';
 					present_state <= send2;
 				when send2 =>
-					if (count < 10) then
-						txd <= output(count);
-						led <= output(count);
-						count <= count + 1;
-					else
-						count <= 0;
+					if (TxD_busy = '0') then
 						present_state <= s5;
+					else
+						TxD_start <= '0';
 					end if;
 				when s5 =>
-					led <= '0';
-					output <= "0010101111";
+					-- start send /
+					TxD_data <= "00101111";
+					TxD_start <= '1';
 					present_state <= send3;
 				when send3 =>
-					if (count < 10) then
-						txd <= output(count);
-						led <= output(count);
-						count <= count + 1;
-					else
-						count <= 0;
+					if (TxD_busy = '0') then
 						present_state <= s6;
+					else
+						TxD_start <= '0';
 					end if;
 				when s6 =>
-					led <= '0';
-					output <= "0001101011";
+					-- start send \n
+					TxD_data <= "00001010";
+					TxD_start <= '1';
 					present_state <= send4;
 				when send4 =>
-					if (count < 10) then
-						txd <= output(count);
-						led <= output(count);
-						count <= count + 1;
-					else
-						count <= 0;
+					if (TxD_busy = '0') then
 						present_state <= s3;
+					else
+						TxD_start <= '0';
 					end if;
 			end case;
 		end if;
