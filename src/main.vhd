@@ -11,7 +11,7 @@ end entity;
 
 architecture main_arch of serial is
 
-component sender is port (
+component async_trasmitter is port (
 	clk_sender : in std_logic;
 	TxD_start : in std_logic;
 	TxD_data : in std_logic_vector(7 downto 0);
@@ -27,12 +27,14 @@ signal player_color : std_logic_vector(15 downto 0);
 
 signal input : std_logic_vector (7 downto 0);
 
-signal tick : std_logic := '0';
+-- sender ports
+signal snd_data : std_logic_vector (7 downto 0);
+signal snd_start : std_logic;
+signal snd_busy : std_logic;
 
 begin
 	-- set senders port
-	txd <= TxD;
-	clk_sender <= clk;
+	snd: async_transmitter port map (clk, snd_start, snd_data, txd, snd_busy);
 
 	process(clk) begin
 		if (clk'event and clk = '1') then
@@ -59,47 +61,47 @@ begin
 					end if;
 				when s3 =>
 					-- start send @
-					TxD_data <= "01000000";
-					TxD_start <= '1';
+					snd_data <= "01000000";
+					snd_start <= '1';
 					present_state <= send1;
 				when send1 =>
-					if (TxD_busy = '0') then
+					if (snd_busy = '0') then
 						present_state <= s4;
 					else
-						TxD_start <= '0';
+						snd_start <= '0';
 					end if;
 				when s4 =>
 					-- start send 0
-					TxD_data <= "00110000";
-					TxD_start <= '1';
+					snd_data <= "00110000";
+					snd_start <= '1';
 					present_state <= send2;
 				when send2 =>
-					if (TxD_busy = '0') then
+					if (snd_busy = '0') then
 						present_state <= s5;
 					else
-						TxD_start <= '0';
+						snd_start <= '0';
 					end if;
 				when s5 =>
 					-- start send /
-					TxD_data <= "00101111";
-					TxD_start <= '1';
+					snd_data <= "00101111";
+					snd_start <= '1';
 					present_state <= send3;
 				when send3 =>
-					if (TxD_busy = '0') then
+					if (snd_busy = '0') then
 						present_state <= s6;
 					else
-						TxD_start <= '0';
+						snd_start <= '0';
 					end if;
 				when s6 =>
 					-- start send \n
-					TxD_data <= "00001010";
-					TxD_start <= '1';
+					snd_data <= "00001010";
+					snd_start <= '1';
 					present_state <= send4;
 				when send4 =>
-					if (TxD_busy = '0') then
+					if (snd_busy = '0') then
 						present_state <= s3;
 					else
-						TxD_start <= '0';
+						snd_start <= '0';
 					end if;
 			end case;
 		end if;
