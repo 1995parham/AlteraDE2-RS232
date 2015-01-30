@@ -12,7 +12,7 @@ end entity;
 architecture main_arch of serial is
 
 component async_transmitter is port (
-	clk_sender : in std_logic;
+	clk : in std_logic;
 	TxD_start : in std_logic;
 	TxD_data : in std_logic_vector(7 downto 0);
 	TxD : out std_logic;
