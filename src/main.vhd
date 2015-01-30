@@ -4,7 +4,6 @@ use ieee.std_logic_1164.all;
 entity serial is port (
 	rxd : in std_logic := '1';
 	txd : out std_logic := '1';
-	led : out std_logic := '0';
 	clk : in std_logic
 );
 end entity;
@@ -42,22 +41,22 @@ begin
 			present_state <= next_state;
 		end if;
 	end process;
-	process(present_state) begin
+	process(present_state, snd_busy) begin
 		case present_state is
 			when s1 =>
 				if (rxd = '0') then
-					present_state <= recv;
+					next_state <= recv;
 				end if;
 			when recv =>
 				-- nothing
-				present_state <= s3;
+				next_state <= s3;
 			when s2 =>
 				if (input(7 downto 0) = "00001010") then
-					present_state <= s3;
+					next_state <= s3;
 				else
 					player_color(7 downto 0) <= input(7 downto 0);
 					player_color(15 downto 8) <= player_color(7 downto 0);
-					present_state <= s2;
+					next_state <= s2;
 				end if;
 			when s3 =>
 				-- start send @
