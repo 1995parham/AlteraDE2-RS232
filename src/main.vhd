@@ -44,13 +44,7 @@ begin
 						present_state <= recv;
 					end if;
 				when recv =>
-					if (count < 8) then
-						input(count) <= rxd;
-						count <= count + 1;
-					else
-						count <= 0;
-						present_state <= s2;
-					end if;
+					-- nothing
 				when s2 =>
 					if (input(7 downto 0) = "00001010") then
 						present_state <= s3;
