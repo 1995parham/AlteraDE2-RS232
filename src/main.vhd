@@ -45,20 +45,14 @@ begin
 	process(present_state, snd_busy) begin
 		case present_state is
 			when s1 =>
-				if (rxd = '0') then
-					next_state <= recv;
-				end if;
+				-- nothing
+				null;
 			when recv =>
 				-- nothing
-				next_state <= s3;
+				null;
 			when s2 =>
-				if (input(7 downto 0) = "00001010") then
-					next_state <= s3;
-				else
-					player_color(7 downto 0) <= input(7 downto 0);
-					player_color(15 downto 8) <= player_color(7 downto 0);
-					next_state <= s2;
-				end if;
+				-- nothing
+				null;
 			when s3 =>
 				-- start send @
 				snd_data <= "01000000";
