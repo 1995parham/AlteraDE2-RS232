@@ -13,7 +13,7 @@ module serial (rxd, txd, clk);
 	/* sender ports */
 	reg [7:0] snd_data;
 	reg snd_start;
-	reg snd_busy;
+	wire snd_busy;
 
 	/* set senders port */
 	async_transmitter snd(clk, snd_start, snd_data, txd, snd_busy);
@@ -28,7 +28,7 @@ module serial (rxd, txd, clk);
 				/* start send @ */
 				snd_data = 8'b0100_0000;
 				snd_start = 1'b1;
-				next_start = send1;
+				next_state = send1;
 			end
 			1: begin
 				snd_start <= 1'b0;
