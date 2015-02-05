@@ -7,8 +7,8 @@ module serial (rxd, txd, clk);
 	parameter [3:0] send1 = 3'b001, send2 = 3'b011, send3 = 3'b101, send4 = 3'b111,
 			s1 = 3'b000, s2 = 3'b010, s3 = 3'b100, s4 = 3'b110;
 
-	reg [3:0] present_state;
-	reg [3:0] next_state;
+	reg [3:0] present_state = s1;
+	reg [3:0] next_state = s1;
 
 	/* sender ports */
 	reg [7:0] snd_data;
